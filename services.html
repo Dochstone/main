@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог услуг — TG STONE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #0AAFFF;
+            --indigo: #5B5BD6;
+            --violet: #BF5AF2;
+            --green: #30D158;
+            --orange: #FF9F0A;
+            --red: #FF3B30;
+            --bg: #050508;
+            --surface: rgba(255,255,255,0.04);
+            --border: rgba(255,255,255,0.09);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .font-display { font-family: 'Syne', sans-serif; }
+
+        ::-webkit-scrollbar { width:6px; height:6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--blue), var(--indigo)); border-radius: 3px; }
+
+        .gt {
+            background: linear-gradient(120deg, var(--blue) 0%, var(--indigo) 55%, var(--violet) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+        }
+
+        .glass-strong {
+            background: rgba(12,12,20,0.88);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+        }
+
+        #bg-canvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; opacity:0.4; }
+
+        .nav-hidden { transform: translateY(-110%); }
+        .nav-visible { transform: translateY(0); }
+
+        .grid-bg {
+            background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+            background-size: 52px 52px;
+        }
+
+        /* Table */
+        .stbl { width:100%; border-collapse:separate; border-spacing:0; }
+        .stbl th {
+            background: rgba(10,175,255,0.08);
+            border-bottom: 2px solid rgba(10,175,255,.25);
+            padding: 14px 16px;
+            text-align:left;
+            font-weight:700;
+            color: var(--blue);
+            font-size: .78rem;
+            text-transform:uppercase;
+            letter-spacing:.06em;
+            white-space:nowrap;
+            font-family:'Syne',sans-serif;
+        }
+        .stbl td {
+            padding: 18px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.045);
+            transition: background .25s;
+            vertical-align: middle;
+        }
+        .stbl tr:hover td { background: rgba(10,175,255,.04); }
+        .stbl tr:last-child td { border-bottom:none; }
+
+        /* Category header */
+        .cat-hdr {
+            background: linear-gradient(90deg, rgba(10,175,255,.15), rgba(91,91,214,.08));
+            border-left: 3px solid var(--blue);
+            padding: 20px 24px;
+        }
+
+        /* Badges */
+        .price-tag {
+            background: linear-gradient(135deg, rgba(10,175,255,.18), rgba(91,91,214,.18));
+            border: 1px solid rgba(10,175,255,.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight:800;
+            color: #4DCFFF;
+            font-size:.88rem;
+            white-space:nowrap;
+            font-family:'Syne',sans-serif;
+        }
+        .id-badge {
+            background: rgba(255,255,255,.05);
+            padding: 4px 8px;
+            border-radius:6px;
+            font-family:monospace;
+            font-size:.8rem;
+            color:#777;
+        }
+        .badge {
+            display:inline-flex; align-items:center; gap:4px;
+            padding: 3px 8px;
+            border-radius:12px;
+            font-size:.7rem;
+            white-space:nowrap;
+        }
+        .badge-green { background:rgba(48,209,88,.1); border:1px solid rgba(48,209,88,.3); color:var(--green); }
+        .badge-violet { background:rgba(191,90,242,.1); border:1px solid rgba(191,90,242,.3); color:var(--violet); }
+        .badge-orange { background:rgba(255,159,10,.1); border:1px solid rgba(255,159,10,.3); color:var(--orange); }
+        .badge-red { background:rgba(255,59,48,.1); border:1px solid rgba(255,59,48,.3); color:var(--red); }
+        .badge-blue { background:rgba(10,175,255,.1); border:1px solid rgba(10,175,255,.3); color:var(--blue); }
+
+        /* Order button */
+        .order-btn {
+            background: linear-gradient(135deg, var(--blue), var(--indigo));
+            color:white;
+            padding: 7px 16px;
+            border-radius:8px;
+            font-weight:700;
+            font-size:.8rem;
+            transition: all .3s;
+            border:none;
+            cursor:pointer;
+            white-space:nowrap;
+            font-family:'DM Sans',sans-serif;
+        }
+        .order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px -5px rgba(10,175,255,.4);
+        }
+
+        /* Wishlist button */
+        .wish-btn {
+            padding: 7px 10px;
+            border-radius:8px;
+            font-size:.85rem;
+            transition: all .3s;
+            border: 1px solid rgba(255,255,255,.1);
+            background: transparent;
+            cursor:pointer;
+            color: #555;
+        }
+        .wish-btn:hover, .wish-btn.active { color:#FF9F0A; border-color:rgba(255,159,10,.4); background:rgba(255,159,10,.08); }
+
+        /* Filter */
+        .filter-btn {
+            padding: 9px 18px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,.09);
+            background: rgba(255,255,255,.04);
+            color: #777;
+            font-weight:500;
+            font-size:.82rem;
+            transition: all .3s;
+            cursor:pointer;
+            white-space:nowrap;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(135deg, rgba(10,175,255,.18), rgba(91,91,214,.18));
+            border-color: var(--blue);
+            color:white;
+        }
+
+        /* Search */
+        .search-wrap { position:relative; }
+        .search-icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:#444; }
+        .search-in {
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.09);
+            border-radius:12px;
+            padding: 12px 20px 12px 46px;
+            color:white;
+            width:100%;
+            font-size:.9rem;
+            transition: all .3s;
+            font-family:'DM Sans',sans-serif;
+        }
+        .search-in:focus { outline:none; border-color:var(--blue); background:rgba(10,175,255,.05); }
+        .search-in::placeholder { color:#444; }
+
+        /* Responsive table */
+        @media(max-width:1024px){ .tbl-wrap{ overflow-x:auto; } .stbl{ min-width:950px; } }
+
+        /* Stat cards */
+        .stat-c {
+            background: linear-gradient(135deg, rgba(10,175,255,.08), rgba(91,91,214,.08));
+            border: 1px solid rgba(10,175,255,.15);
+            border-radius: 16px;
+            padding: 18px;
+            text-align:center;
+        }
+
+        /* Calculator */
+        .calc-slider {
+            -webkit-appearance:none;
+            appearance:none;
+            width:100%;
+            height:4px;
+            border-radius:2px;
+            background: linear-gradient(to right, var(--blue), var(--indigo));
+            outline:none;
+        }
+        .calc-slider::-webkit-slider-thumb {
+            -webkit-appearance:none;
+            width:18px; height:18px;
+            border-radius:50%;
+            background: white;
+            box-shadow: 0 0 8px rgba(10,175,255,.5);
+            cursor:pointer;
+        }
+
+        /* Wishlist panel */
+        #wishlist-panel {
+            position:fixed; top:0; right:-380px;
+            width:360px; height:100vh;
+            z-index:60;
+            transition: right .4s cubic-bezier(.4,0,.2,1);
+            overflow-y:auto;
+            display:flex;
+            flex-direction:column;
+        }
+        #wishlist-panel.open { right:0; }
+
+        /* Wishlist badge */
+        #wish-count {
+            position:absolute; top:-6px; right:-6px;
+            min-width:18px; height:18px;
+            border-radius:9px;
+            background:var(--orange);
+            color:white;
+            font-size:.65rem;
+            font-weight:800;
+            display:flex; align-items:center; justify-content:center;
+            padding: 0 4px;
+        }
+
+        /* Mobile menu */
+        #mobile-menu {
+            transition: transform .4s cubic-bezier(.4,0,.2,1), opacity .3s;
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        #mobile-menu.open { transform: translateX(0); opacity:1; }
+
+        body::after {
+            content:'';
+            position:fixed; inset:0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events:none; z-index:0; opacity:.4;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- ═══════ NAV ═══════ -->
+<nav id="navbar" class="fixed top-0 w-full z-50 transition-transform duration-500 nav-hidden">
+    <div class="glass-strong px-5 py-3.5 mx-4 mt-3 rounded-2xl max-w-7xl mx-auto">
+        <div class="flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0AAFFF] to-[#5B5BD6] flex items-center justify-center" style="box-shadow:0 0 16px rgba(10,175,255,.4)">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                </div>
+                <span class="font-display text-lg font-bold gt">TG STONE</span>
+            </a>
+            <div class="hidden md:flex items-center gap-7">
+                <a href="index.html" class="text-sm text-gray-400 hover:text-white transition-colors">Главная</a>
+                <a href="services.html" class="text-sm text-white font-semibold">Каталог</a>
+                <a href="index.html#panel" class="text-sm text-gray-400 hover:text-white transition-colors">SMM Панель</a>
+                <a href="index.html#contacts" class="text-sm text-gray-400 hover:text-white transition-colors">Контакты</a>
+                <!-- Wishlist trigger -->
+                <button onclick="openWishlist()" class="relative text-gray-400 hover:text-white transition-colors" title="Избранное">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    <span id="wish-count" class="hidden">0</span>
+                </button>
+            </div>
+            <button id="mobile-menu-btn" class="md:hidden flex flex-col gap-1.5 w-8 h-8 items-center justify-center">
+                <span class="block w-6 h-0.5 bg-white rounded"></span>
+                <span class="block w-6 h-0.5 bg-white rounded"></span>
+                <span class="block w-4 h-0.5 bg-white rounded"></span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="fixed top-0 right-0 h-full w-72 z-50 glass-strong flex flex-col pt-20 pb-8 px-8">
+    <button id="close-menu" class="absolute top-5 right-5 text-gray-400 hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <nav class="flex flex-col gap-5 mt-4">
+        <a href="index.html" class="text-lg text-gray-300 hover:text-white transition-colors border-b border-white/10 pb-4">Главная</a>
+        <a href="services.html" class="text-lg font-semibold text-white border-b border-white/10 pb-4">Каталог</a>
+        <a href="index.html#panel" class="text-lg text-gray-300 hover:text-white transition-colors border-b border-white/10 pb-4">SMM Панель</a>
+        <a href="index.html#contacts" class="text-lg text-gray-300 hover:text-white transition-colors">Контакты</a>
+    </nav>
+</div>
+<div id="menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden"></div>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="relative pt-32 pb-10 px-4">
+    <div class="absolute inset-0 grid-bg opacity-20 pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-12">
+            <span class="inline-block px-3 py-1 text-xs font-semibold tracking-widest uppercase text-[#0AAFFF] glass rounded-full mb-4">500+ услуг</span>
+            <h1 class="font-display text-4xl md:text-6xl font-bold mb-5 gt">Каталог услуг</h1>
+            <p class="text-gray-400 text-base max-w-xl mx-auto mb-8">
+                Автоматическое выполнение, минимальные цены, гарантия качества.
+            </p>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto mb-10">
+                <div class="stat-c"><div class="font-display text-2xl font-bold text-[#0AAFFF] mb-1">500+</div><div class="text-xs text-gray-400">Услуг</div></div>
+                <div class="stat-c"><div class="font-display text-2xl font-bold text-[#5B5BD6] mb-1">0.1₽</div><div class="text-xs text-gray-400">От 10 копеек</div></div>
+                <div class="stat-c"><div class="font-display text-2xl font-bold text-[#BF5AF2] mb-1">24/7</div><div class="text-xs text-gray-400">Автовыполнение</div></div>
+                <div class="stat-c"><div class="font-display text-2xl font-bold text-[#30D158] mb-1">5 мин</div><div class="text-xs text-gray-400">Средний старт</div></div>
+            </div>
+
+            <!-- Search -->
+            <div class="search-wrap max-w-2xl mx-auto mb-6">
+                <svg class="search-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" class="search-in" placeholder="Поиск: 'подписчики', 'просмотры', 'реакции'..." id="searchInput">
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap justify-center gap-2 mb-4">
+                <button class="filter-btn active" data-filter="all">Все услуги</button>
+                <button class="filter-btn" data-filter="subscribers">Подписчики</button>
+                <button class="filter-btn" data-filter="views">Просмотры</button>
+                <button class="filter-btn" data-filter="reactions">Реакции</button>
+                <button class="filter-btn" data-filter="premium">Премиум</button>
+                <button class="filter-btn" data-filter="bots">Боты</button>
+            </div>
+        </div>
+
+        <!-- ═══ Price Calculator ═══ -->
+        <div class="glass rounded-3xl p-6 md:p-8 mb-12 relative overflow-hidden">
+            <div class="absolute -top-16 -right-16 w-48 h-48 bg-[#5B5BD6] rounded-full filter blur-3xl opacity-10 pointer-events-none"></div>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0AAFFF] to-[#5B5BD6] flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                </div>
+                <div>
+                    <h2 class="font-display text-lg font-bold">Калькулятор стоимости</h2>
+                    <p class="text-xs text-gray-400">Рассчитайте цену перед заказом</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Тип услуги</label>
+                    <select id="calc-service" class="w-full glass rounded-xl px-4 py-3 text-white text-sm bg-transparent focus:outline-none focus:border-[#0AAFFF] border border-white/10">
+                        <option value="0.078">Подписчики (боты) — 78.12₽/1000</option>
+                        <option value="0.156">Подписчики из поиска — 156.24₽/1000</option>
+                        <option value="1.967">Премиум подписчики — 1966.68₽/1000</option>
+                        <option value="0.00059">Автопросмотры — 0.59₽/1000</option>
+                        <option value="0.00782">🇷🇺 RU Просмотры — 7.82₽/1000</option>
+                        <option value="0.00274">Позитивные реакции — 2.74₽/1000</option>
+                        <option value="0.00215">Рандомные реакции — 2.15₽/1000</option>
+                        <option value="0.607">Боты в бот (+сообщение) — 607.39₽/1000</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Количество: <span id="calc-qty-label" class="text-[#0AAFFF] font-bold">1 000</span></label>
+                    <input type="range" id="calc-qty" class="calc-slider" min="100" max="100000" step="100" value="1000">
+                </div>
+                <div class="glass rounded-2xl p-5 text-center border border-[#0AAFFF]/20">
+                    <div class="text-xs text-gray-400 mb-1 uppercase tracking-wider">Итого</div>
+                    <div id="calc-result" class="font-display text-3xl font-bold gt">78.12 ₽</div>
+                    <a href="https://t.me/your_username" target="_blank" class="inline-block mt-3 px-5 py-2 rounded-full bg-gradient-to-r from-[#0AAFFF] to-[#5B5BD6] text-white text-xs font-bold hover:shadow-lg transition-all">
+                        Заказать
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ Services Tables ═══ -->
+        <div class="space-y-10" id="servicesContainer">
+
+            <!-- ── Subscribers ── -->
+            <div class="service-category" data-category="subscribers">
+                <div class="glass rounded-2xl overflow-hidden">
+                    <div class="cat-hdr flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#0AAFFF] flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                            </div>
+                            <div>
+                                <h2 class="font-display text-lg font-bold">Telegram Подписчики</h2>
+                                <p class="text-xs text-gray-400">Накрутка подписчиков в каналы и чаты</p>
+                            </div>
+                        </div>
+                        <span class="badge badge-blue">15 услуг</span>
+                    </div>
+                    <div class="tbl-wrap">
+                        <table class="stbl">
+                            <thead><tr><th>ID</th><th>Название</th><th>Цена /1000</th><th>Мин/Макс</th><th>Скорость</th><th>Гарантия</th><th>Заказать</th><th>★</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="id-badge">#823</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1">TG Быстрые боты</div>
+                                        <div class="text-xs text-gray-400 mb-2">Старт 0-1 час. До 20к/сутки. Большая часть с русскими именами.</div>
+                                        <div class="flex flex-wrap gap-1"><span class="badge badge-green">⚡ До 20к/сутки</span><span class="badge badge-violet">🤖 Боты</span></div>
+                                    </td>
+                                    <td><span class="price-tag">78.12 ₽</span></td>
+                                    <td class="text-xs text-gray-400">10–300 000</td>
+                                    <td class="text-xs text-gray-400">13 мин</td>
+                                    <td><span class="badge badge-red">❌ Без гарантии</span></td>
+                                    <td><button class="order-btn" onclick="orderService(823)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 823, 'TG Быстрые боты', '78.12₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#1851</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1 text-[#0AAFFF]">TG 🔎 Подписчики из поиска</div>
+                                        <div class="text-xs text-gray-400 mb-2">Аккаунты подписываются из поиска — отлично влияет на ранжирование. Без списаний 60 дней.</div>
+                                        <div class="flex flex-wrap gap-1"><span class="badge badge-green">⚡ До 10к/сутки</span><span class="badge badge-orange">♻ 60 дней</span></div>
+                                    </td>
+                                    <td><span class="price-tag">156.24 ₽</span></td>
+                                    <td class="text-xs text-gray-400">100–100 000</td>
+                                    <td class="text-xs text-gray-400">1ч 20мин</td>
+                                    <td><span class="badge badge-orange">✓ 60 дней</span></td>
+                                    <td><button class="order-btn" onclick="orderService(1851)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1851, 'TG Подписчики из поиска', '156.24₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#2222</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1 text-[#BF5AF2]">TG Подписчики из поиска по ключевым словам</div>
+                                        <div class="text-xs text-gray-400 mb-2">Аккаунты находят канал через поиск по ключевому слову. Без списаний до 90 дней.</div>
+                                        <div class="flex flex-wrap gap-1"><span class="badge badge-violet">🔍 SEO</span><span class="badge badge-orange">♻ 90 дней</span></div>
+                                    </td>
+                                    <td><span class="price-tag">193.35 ₽</span></td>
+                                    <td class="text-xs text-gray-400">100–100 000</td>
+                                    <td class="text-xs text-gray-400">2ч 39мин</td>
+                                    <td><span class="badge badge-orange">✓ 90 дней</span></td>
+                                    <td><button class="order-btn" onclick="orderService(2222)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 2222, 'TG Подписчики по ключевым словам', '193.35₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#2129</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1">TG 🔥 Быстрые подписчики</div>
+                                        <div class="text-xs text-gray-400 mb-2">Скорость до 50к в сутки. Риск снижения канала в поиске.</div>
+                                        <div class="flex flex-wrap gap-1"><span class="badge badge-green">⚡ До 50к/сутки</span><span class="badge badge-red">⚠️ Риск</span></div>
+                                    </td>
+                                    <td><span class="price-tag">4.69 ₽</span></td>
+                                    <td class="text-xs text-gray-400">10k–10k</td>
+                                    <td class="text-xs text-gray-400">128ч 39мин</td>
+                                    <td><span class="badge badge-red">❌ Без гарантии</span></td>
+                                    <td><button class="order-btn" onclick="orderService(2129)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 2129, 'TG Быстрые подписчики', '4.69₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#1952</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1 text-[#30D158]">TG 🔥 Моментальные подписчики без отписок</div>
+                                        <div class="text-xs text-gray-400 mb-2">Старт 0-1 час. До 250к в сутки. До 90 дней без отписок.</div>
+                                        <div class="flex flex-wrap gap-1"><span class="badge badge-green">⚡ До 250к/сутки</span><span class="badge badge-violet">⭐ Премиум</span></div>
+                                    </td>
+                                    <td><span class="price-tag">142.57 ₽</span></td>
+                                    <td class="text-xs text-gray-400">500–200 000</td>
+                                    <td class="text-xs text-gray-400">2ч 43мин</td>
+                                    <td><span class="badge badge-orange">♻ 90 дней</span></td>
+                                    <td><button class="order-btn" onclick="orderService(1952)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1952, 'TG Моментальные без отписок', '142.57₽')">♡</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Premium Subscribers ── -->
+            <div class="service-category" data-category="premium">
+                <div class="glass rounded-2xl overflow-hidden">
+                    <div class="cat-hdr flex items-center justify-between" style="border-left-color:#BF5AF2; background:linear-gradient(90deg,rgba(191,90,242,.15),rgba(91,91,214,.08))">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#BF5AF2] flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            </div>
+                            <div>
+                                <h2 class="font-display text-lg font-bold">Telegram ⭐ Премиум подписчики</h2>
+                                <p class="text-xs text-gray-400">Для вывода в топ поиска</p>
+                            </div>
+                        </div>
+                        <span class="badge badge-violet">8 услуг</span>
+                    </div>
+                    <div class="tbl-wrap">
+                        <table class="stbl">
+                            <thead><tr><th>ID</th><th>Название</th><th>Цена /1000</th><th>Мин/Макс</th><th>Скорость</th><th>Гарантия</th><th>Заказать</th><th>★</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="id-badge">#1486</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1 text-[#BF5AF2]">TG Премиум подписчики</div>
+                                        <div class="text-xs text-gray-400 mb-2">Из разных стран. Каналы возвращаются в поиск через 24 часа.</div>
+                                        <div class="flex gap-1"><span class="badge badge-violet">⭐ Премиум</span><span class="badge badge-orange">♻ 30 дней</span></div>
+                                    </td>
+                                    <td><span class="price-tag">1 966.68 ₽</span></td>
+                                    <td class="text-xs text-gray-400">10–200 000</td>
+                                    <td class="text-xs text-gray-400">6 мин</td>
+                                    <td><span class="badge badge-orange">✓ 30 дней</span></td>
+                                    <td><button class="order-btn" onclick="orderService(1486)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1486, 'TG Премиум подписчики', '1966.68₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#1835</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1 text-[#FF3B30]">TG ⭐ 🇷🇺 Русские премиум подписчики</div>
+                                        <div class="text-xs text-gray-400 mb-2">Гео РУ, из поиска. Гарантия 45 дней. Лучшее качество.</div>
+                                        <div class="flex gap-1"><span class="badge badge-blue">🇷🇺 Russia</span><span class="badge badge-violet">⭐ Премиум</span></div>
+                                    </td>
+                                    <td><span class="price-tag">2 482.27 ₽</span></td>
+                                    <td class="text-xs text-gray-400">5–15 500</td>
+                                    <td class="text-xs text-gray-400">3 мин</td>
+                                    <td><span class="badge badge-orange">♻ 45 дней</span></td>
+                                    <td><button class="order-btn" onclick="orderService(1835)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1835, 'TG Русские премиум', '2482.27₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#1838</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1">TG ⭐ 🇷🇺 Русские премиум ⟮ ♻ 180 дней ⟯</div>
+                                        <div class="text-xs text-gray-400 mb-2">Из поиска с гео РУ. Максимальная гарантия 180 дней.</div>
+                                        <div class="flex gap-1"><span class="badge badge-blue">🇷🇺 Russia</span><span class="badge badge-orange">♻ 180 дней</span></div>
+                                    </td>
+                                    <td><span class="price-tag">6 054.30 ₽</span></td>
+                                    <td class="text-xs text-gray-400">5–35 500</td>
+                                    <td class="text-xs text-gray-400">—</td>
+                                    <td><span class="badge badge-orange">♻ 180 дней</span></td>
+                                    <td><button class="order-btn" onclick="orderService(1838)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1838, 'TG Русские премиум 180д', '6054.30₽')">♡</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Auto Views ── -->
+            <div class="service-category" data-category="views">
+                <div class="glass rounded-2xl overflow-hidden">
+                    <div class="cat-hdr flex items-center justify-between" style="border-left-color:#30D158; background:linear-gradient(90deg,rgba(48,209,88,.15),rgba(91,91,214,.08))">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#30D158] flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </div>
+                            <div>
+                                <h2 class="font-display text-lg font-bold">Telegram Автопросмотры</h2>
+                                <p class="text-xs text-gray-400">Автоматические просмотры на новые посты</p>
+                            </div>
+                        </div>
+                        <span class="badge badge-green">12 услуг</span>
+                    </div>
+                    <div class="tbl-wrap">
+                        <table class="stbl">
+                            <thead><tr><th>ID</th><th>Название</th><th>Цена /1000</th><th>Мин/Макс</th><th>Скорость</th><th>Особенности</th><th>Заказать</th><th>★</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="id-badge">#1376</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1">TG Автопросмотры</div>
+                                        <div class="text-xs text-gray-400 mb-2">Быстрый старт. До 200к в сутки. Дата окончания вместо количества постов.</div>
+                                        <div class="flex gap-1"><span class="badge badge-green">⚡ До 200к/сутки</span><span class="badge badge-violet">🔁 Авто</span></div>
+                                    </td>
+                                    <td><span class="price-tag">0.59 ₽</span></td>
+                                    <td class="text-xs text-gray-400">200–500 000</td>
+                                    <td class="text-xs text-gray-400">49 мин</td>
+                                    <td class="text-xs text-gray-400">Без лимита постов</td>
+                                    <td><button class="order-btn" onclick="orderService(1376)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1376, 'TG Автопросмотры', '0.59₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#1479</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1 text-[#FF9F0A]">TG 🇷🇺 RU Автопросмотры плавные</div>
+                                        <div class="text-xs text-gray-400 mb-2">Старт моментальный. 30/мин. Просмотры из России.</div>
+                                        <div class="flex gap-1"><span class="badge badge-blue">🇷🇺 Russia</span><span class="badge badge-green">🐢 30/мин</span></div>
+                                    </td>
+                                    <td><span class="price-tag">7.82 ₽</span></td>
+                                    <td class="text-xs text-gray-400">20–10 000</td>
+                                    <td class="text-xs text-gray-400">5 мин</td>
+                                    <td class="text-xs text-gray-400">Плавное добавление</td>
+                                    <td><button class="order-btn" onclick="orderService(1479)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1479, 'TG RU Просмотры плавные', '7.82₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#2052</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1">TG Автопросмотры (до 50 млн)</div>
+                                        <div class="text-xs text-gray-400 mb-2">Быстрый старт. До 50к в сутки. До 50 млн просмотров.</div>
+                                        <div class="flex gap-1"><span class="badge badge-green">⚡ До 50к/сутки</span></div>
+                                    </td>
+                                    <td><span class="price-tag">0.65 ₽</span></td>
+                                    <td class="text-xs text-gray-400">10–50 000 000</td>
+                                    <td class="text-xs text-gray-400">51 мин</td>
+                                    <td class="text-xs text-gray-400">До 50 млн</td>
+                                    <td><button class="order-btn" onclick="orderService(2052)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 2052, 'TG Автопросмотры 50млн', '0.65₽')">♡</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Reactions ── -->
+            <div class="service-category" data-category="reactions">
+                <div class="glass rounded-2xl overflow-hidden">
+                    <div class="cat-hdr flex items-center justify-between" style="border-left-color:#FF9F0A; background:linear-gradient(90deg,rgba(255,159,10,.15),rgba(91,91,214,.08))">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#FF9F0A] flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            </div>
+                            <div>
+                                <h2 class="font-display text-lg font-bold">Telegram Реакции</h2>
+                                <p class="text-xs text-gray-400">Эмодзи-реакции на посты</p>
+                            </div>
+                        </div>
+                        <span class="badge badge-orange">20+ услуг</span>
+                    </div>
+                    <div class="tbl-wrap">
+                        <table class="stbl">
+                            <thead><tr><th>ID</th><th>Название</th><th>Цена /1000</th><th>Мин/Макс</th><th>Скорость</th><th>Тип</th><th>Заказать</th><th>★</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="id-badge">#1175</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1">TG Позитивные реакции на пост 👍🤩🎉🔥❤️</div>
+                                        <div class="text-xs text-gray-400 mb-2">Моментальный старт и добавление. До 1к в сутки.</div>
+                                        <div class="flex gap-1"><span class="badge badge-green">⚡ Моментально</span><span class="badge badge-violet">👍 Позитив</span></div>
+                                    </td>
+                                    <td><span class="price-tag">2.74 ₽</span></td>
+                                    <td class="text-xs text-gray-400">10–1 000 000</td>
+                                    <td class="text-xs text-gray-400">58 мин</td>
+                                    <td class="text-xs text-gray-400">👍🤩🎉🔥❤️</td>
+                                    <td><button class="order-btn" onclick="orderService(1175)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1175, 'TG Позитивные реакции', '2.74₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#1216</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1">TG 🤮 😭 Набор рандомных реакций</div>
+                                        <div class="text-xs text-gray-400 mb-2">Быстрый старт. До 600к в сутки.</div>
+                                        <div class="flex gap-1"><span class="badge badge-green">⚡ До 600к/сутки</span></div>
+                                    </td>
+                                    <td><span class="price-tag">2.15 ₽</span></td>
+                                    <td class="text-xs text-gray-400">5–100 000</td>
+                                    <td class="text-xs text-gray-400">—</td>
+                                    <td class="text-xs text-gray-400">🤮😭</td>
+                                    <td><button class="order-btn" onclick="orderService(1216)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1216, 'TG Рандомные реакции', '2.15₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#1939</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1 text-[#BF5AF2]">TG ⭐ Stars на пост</div>
+                                        <div class="text-xs text-gray-400 mb-2">Платные реакции звёзды. До 30к в сутки. Включить Stars в настройках канала.</div>
+                                        <div class="flex gap-1"><span class="badge badge-violet">⭐ Stars</span><span class="badge badge-green">⚡ До 30к/сутки</span></div>
+                                    </td>
+                                    <td><span class="price-tag">3 710.70 ₽</span></td>
+                                    <td class="text-xs text-gray-400">2–1 000 000</td>
+                                    <td class="text-xs text-gray-400">5 мин</td>
+                                    <td class="text-xs text-gray-400">⭐ Premium</td>
+                                    <td><button class="order-btn" onclick="orderService(1939)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1939, 'TG Stars на пост', '3710.70₽')">♡</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Bot Services ── -->
+            <div class="service-category" data-category="bots">
+                <div class="glass rounded-2xl overflow-hidden">
+                    <div class="cat-hdr flex items-center justify-between" style="border-left-color:#5B5BD6; background:linear-gradient(90deg,rgba(91,91,214,.15),rgba(10,175,255,.08))">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#5B5BD6] flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            </div>
+                            <div>
+                                <h2 class="font-display text-lg font-bold">Telegram Боты</h2>
+                                <p class="text-xs text-gray-400">Подписчики и активность для ботов</p>
+                            </div>
+                        </div>
+                        <span class="badge badge-blue">10 услуг</span>
+                    </div>
+                    <div class="tbl-wrap">
+                        <table class="stbl">
+                            <thead><tr><th>ID</th><th>Название</th><th>Цена /1000</th><th>Мин/Макс</th><th>Скорость</th><th>Активность</th><th>Заказать</th><th>★</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="id-badge">#1960</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1">TG Премиум подписчики в Бот + сообщение ⟮ ɢ 7 ⟯</div>
+                                        <div class="text-xs text-gray-400 mb-2">При запуске бота аккаунты отправляют рандомное сообщение. Премиум 7-15 дней.</div>
+                                        <div class="flex gap-1"><span class="badge badge-violet">⭐ Премиум</span><span class="badge badge-orange">💬 Сообщения</span></div>
+                                    </td>
+                                    <td><span class="price-tag">607.39 ₽</span></td>
+                                    <td class="text-xs text-gray-400">10–20 000</td>
+                                    <td class="text-xs text-gray-400">42 мин</td>
+                                    <td class="text-xs text-gray-400">+ Сообщения</td>
+                                    <td><button class="order-btn" onclick="orderService(1960)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1960, 'TG Бот + сообщение', '607.39₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#1962</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1 text-[#FF9F0A]">TG 🔥 Премиум подписчики для Бота с активностью</div>
+                                        <div class="text-xs text-gray-400 mb-2">Регулярное взаимодействие 7 дней. Эффект «живого общения».</div>
+                                        <div class="flex gap-1"><span class="badge badge-violet">⭐ Премиум</span><span class="badge badge-green">🔥 Активность</span></div>
+                                    </td>
+                                    <td><span class="price-tag">1 556.55 ₽</span></td>
+                                    <td class="text-xs text-gray-400">100–100 000</td>
+                                    <td class="text-xs text-gray-400">—</td>
+                                    <td class="text-xs text-gray-400">7 дней</td>
+                                    <td><button class="order-btn" onclick="orderService(1962)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 1962, 'TG Бот с активностью 7д', '1556.55₽')">♡</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="id-badge">#2172</span></td>
+                                    <td>
+                                        <div class="font-semibold text-sm mb-1">TG Премиум подписчики для Бота 90 дней</div>
+                                        <div class="text-xs text-gray-400 mb-2">Ежедневно 90 дней аккаунты будут отправлять /start. Микс гео.</div>
+                                        <div class="flex gap-1"><span class="badge badge-orange">♻ 90 дней</span><span class="badge badge-green">📅 Ежедневно</span></div>
+                                    </td>
+                                    <td><span class="price-tag">2 464.69 ₽</span></td>
+                                    <td class="text-xs text-gray-400">10–10 000</td>
+                                    <td class="text-xs text-gray-400">—</td>
+                                    <td class="text-xs text-gray-400">90 дней</td>
+                                    <td><button class="order-btn" onclick="orderService(2172)">Заказать</button></td>
+                                    <td><button class="wish-btn" onclick="toggleWish(this, 2172, 'TG Бот 90 дней', '2464.69₽')">♡</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /servicesContainer -->
+
+        <!-- CTA -->
+        <div class="mt-14 glass rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+            <div class="absolute -top-16 -right-16 w-48 h-48 bg-[#0AAFFF] rounded-full filter blur-3xl opacity-10 pointer-events-none"></div>
+            <h3 class="font-display text-2xl md:text-3xl font-bold mb-3 gt">Не нашли нужную услугу?</h3>
+            <p class="text-gray-400 mb-7 max-w-lg mx-auto text-sm">Свяжитесь для индивидуального заказа — предложим кастомные решения под ваши задачи.</p>
+            <a href="https://t.me/your_username" target="_blank" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-[#0AAFFF] to-[#5B5BD6] text-white font-semibold hover:shadow-lg hover:shadow-blue-500/30 transition-all text-sm">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                <span>Написать в Telegram</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-7 px-4 border-t border-white/8 mt-8">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0AAFFF] to-[#5B5BD6] flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+            </div>
+            <span class="font-display font-bold text-sm">TG STONE</span>
+        </div>
+        <div class="text-gray-600 text-xs">© 2025 TG STONE · Все права защищены</div>
+    </div>
+</footer>
+
+<!-- ═══════ Wishlist Panel ═══════ -->
+<div id="wishlist-panel" class="glass-strong flex-col">
+    <div class="p-6 border-b border-white/10">
+        <div class="flex items-center justify-between">
+            <h3 class="font-display text-lg font-bold">Избранные услуги</h3>
+            <button onclick="closeWishlist()" class="text-gray-400 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+    </div>
+    <div id="wishlist-items" class="flex-1 p-5 space-y-3 overflow-y-auto">
+        <p id="wishlist-empty" class="text-gray-500 text-sm text-center py-8">Добавьте услуги нажав ♡</p>
+    </div>
+    <div class="p-5 border-t border-white/10">
+        <a href="https://t.me/your_username" target="_blank" class="block w-full py-3.5 rounded-full bg-gradient-to-r from-[#0AAFFF] to-[#5B5BD6] text-white font-bold text-center text-sm hover:shadow-lg transition-all">
+            Заказать всё
+        </a>
+    </div>
+</div>
+<div id="wishlist-overlay" class="fixed inset-0 bg-black/50 z-50 hidden" onclick="closeWishlist()"></div>
+
+<!-- Order Modal -->
+<div id="orderModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/75 backdrop-blur-md" onclick="closeModal()"></div>
+    <div class="relative glass-strong rounded-3xl p-8 max-w-md w-full transform scale-95 opacity-0 transition-all duration-300" id="modalContent">
+        <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <div class="text-center mb-6">
+            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#0AAFFF] to-[#5B5BD6] flex items-center justify-center mx-auto mb-4" style="box-shadow:0 0 20px rgba(10,175,255,.4)">
+                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <h3 class="font-display text-xl font-bold mb-1">Заказ услуги #<span id="modalServiceId"></span></h3>
+            <p class="text-gray-400 text-sm">Перейдите в Telegram для оформления</p>
+        </div>
+        <div class="glass rounded-xl p-4 mb-5 text-sm space-y-1">
+            <div class="text-gray-400">Укажите в сообщении:</div>
+            <div>ID: <span class="text-[#0AAFFF] font-mono" id="modalId"></span></div>
+            <div>Ссылка на ваш канал/пост</div>
+            <div>Нужное количество</div>
+        </div>
+        <a href="https://t.me/your_username" target="_blank" class="block w-full py-3.5 rounded-full bg-gradient-to-r from-[#0AAFFF] to-[#5B5BD6] text-white font-bold text-center hover:shadow-lg transition-all text-sm">
+            Перейти в Telegram
+        </a>
+    </div>
+</div>
+
+<script>
+// ══════ Three.js ══════
+const canvas = document.getElementById('bg-canvas');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const geo = new THREE.BufferGeometry();
+const pos = new Float32Array(800*3);
+for(let i=0;i<pos.length;i++) pos[i]=(Math.random()-.5)*55;
+geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+const mat = new THREE.PointsMaterial({size:.02, color:0x0AAFFF, transparent:true, opacity:0.5, blending:THREE.AdditiveBlending});
+const mesh = new THREE.Points(geo, mat);
+scene.add(mesh); camera.position.z=5;
+let mx=0,my=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX/innerWidth-.5; my=e.clientY/innerHeight-.5;});
+(function a(){requestAnimationFrame(a); mesh.rotation.y+=.0005; mesh.rotation.x+=.0002; mesh.rotation.x+=my*.02; mesh.rotation.y+=mx*.02; renderer.render(scene,camera);})();
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight);});
+
+// ══════ Nav ══════
+const navbar=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+    if(scrollY>100){navbar.classList.remove('nav-hidden');navbar.classList.add('nav-visible');}
+    else{navbar.classList.add('nav-hidden');navbar.classList.remove('nav-visible');}
+});
+
+// ══════ Mobile Menu ══════
+const mm=document.getElementById('mobile-menu'), mo=document.getElementById('menu-overlay');
+document.getElementById('mobile-menu-btn').onclick=()=>{mm.classList.add('open');mo.classList.remove('hidden');};
+document.getElementById('close-menu').onclick=()=>{mm.classList.remove('open');mo.classList.add('hidden');};
+mo.onclick=()=>{mm.classList.remove('open');mo.classList.add('hidden');};
+
+// ══════ Filters ══════
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const f=btn.dataset.filter;
+        document.querySelectorAll('.service-category').forEach(cat=>{
+            if(f==='all'||cat.dataset.category===f){
+                cat.style.display='block';
+                gsap.fromTo(cat,{opacity:0,y:20},{opacity:1,y:0,duration:.4});
+            } else { cat.style.display='none'; }
+        });
+    });
+});
+
+// ══════ Search ══════
+document.getElementById('searchInput').addEventListener('input',e=>{
+    const q=e.target.value.toLowerCase();
+    document.querySelectorAll('.stbl tbody tr').forEach(r=>{
+        r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';
+    });
+    // show all categories when searching
+    if(q) document.querySelectorAll('.service-category').forEach(c=>c.style.display='block');
+});
+
+// ══════ Modal ══════
+function orderService(id){
+    const m=document.getElementById('orderModal'), c=document.getElementById('modalContent');
+    document.getElementById('modalServiceId').textContent=id;
+    document.getElementById('modalId').textContent=id;
+    m.classList.remove('hidden'); m.classList.add('flex');
+    setTimeout(()=>{c.classList.remove('scale-95','opacity-0');c.classList.add('scale-100','opacity-100');},10);
+}
+function closeModal(){
+    const m=document.getElementById('orderModal'), c=document.getElementById('modalContent');
+    c.classList.remove('scale-100','opacity-100'); c.classList.add('scale-95','opacity-0');
+    setTimeout(()=>{m.classList.add('hidden');m.classList.remove('flex');},300);
+}
+
+// ══════ Calculator ══════
+const calcService=document.getElementById('calc-service');
+const calcQty=document.getElementById('calc-qty');
+const calcResult=document.getElementById('calc-result');
+const calcQtyLabel=document.getElementById('calc-qty-label');
+
+function updateCalc(){
+    const rate=parseFloat(calcService.value);
+    const qty=parseInt(calcQty.value);
+    calcQtyLabel.textContent=qty.toLocaleString('ru-RU');
+    const total=(rate*qty).toFixed(2);
+    calcResult.textContent=parseFloat(total).toLocaleString('ru-RU',{minimumFractionDigits:2})+ ' ₽';
+}
+calcService.addEventListener('change',updateCalc);
+calcQty.addEventListener('input',updateCalc);
+updateCalc();
+
+// ══════ Wishlist ══════
+let wishlist=[];
+
+function toggleWish(btn, id, name, price){
+    const idx=wishlist.findIndex(w=>w.id===id);
+    if(idx>-1){
+        wishlist.splice(idx,1);
+        btn.classList.remove('active');
+        btn.textContent='♡';
+    } else {
+        wishlist.push({id,name,price});
+        btn.classList.add('active');
+        btn.textContent='♥';
+    }
+    updateWishBadge();
+    renderWishlist();
+}
+
+function updateWishBadge(){
+    const badge=document.getElementById('wish-count');
+    if(wishlist.length>0){
+        badge.textContent=wishlist.length;
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
+function renderWishlist(){
+    const container=document.getElementById('wishlist-items');
+    const empty=document.getElementById('wishlist-empty');
+    if(wishlist.length===0){
+        empty.style.display='block';
+        // remove all items except empty
+        container.querySelectorAll('.wish-item').forEach(e=>e.remove());
+        return;
+    }
+    empty.style.display='none';
+    container.querySelectorAll('.wish-item').forEach(e=>e.remove());
+    wishlist.forEach(w=>{
+        const div=document.createElement('div');
+        div.className='wish-item glass rounded-xl p-4 flex items-center justify-between gap-3';
+        div.innerHTML=`
+            <div class="flex-1 min-w-0">
+                <div class="text-sm font-semibold truncate">${w.name}</div>
+                <div class="text-xs text-[#0AAFFF] mt-0.5">${w.price}/1000</div>
+            </div>
+            <button onclick="removeWish(${w.id})" class="text-gray-500 hover:text-red-400 transition-colors flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function removeWish(id){
+    wishlist=wishlist.filter(w=>w.id!==id);
+    // reset btn
+    document.querySelectorAll('.wish-btn').forEach(btn=>{
+        if(btn.getAttribute('onclick').includes(','+id+',')||btn.getAttribute('onclick').includes(', '+id+',')){
+            btn.classList.remove('active'); btn.textContent='♡';
+        }
+    });
+    updateWishBadge(); renderWishlist();
+}
+
+function openWishlist(){
+    document.getElementById('wishlist-panel').classList.add('open');
+    document.getElementById('wishlist-overlay').classList.remove('hidden');
+}
+function closeWishlist(){
+    document.getElementById('wishlist-panel').classList.remove('open');
+    document.getElementById('wishlist-overlay').classList.add('hidden');
+}
+
+// ══════ GSAP ══════
+gsap.registerPlugin(ScrollTrigger);
+gsap.utils.toArray('.service-category').forEach((el,i)=>{
+    gsap.from(el,{
+        scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none reverse'},
+        y:50,opacity:0,duration:.7,delay:i*.08,ease:'power3.out'
+    });
+});
+</script>
+</body>
+</html>
