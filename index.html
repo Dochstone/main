@@ -9,12 +9,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root{--blue:#0AAFFF;--indigo:#5B5BD6;--violet:#BF5AF2;--green:#30D158;--orange:#FF9F0A;--red:#FF3B30;--bg:#050508;--surface:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.09)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:#f0f0f0;overflow-x:hidden}
 .font-display{font-family:'Syne',sans-serif}
+.num{font-family:'Space Grotesk',sans-serif;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-0.03em;line-height:1}
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--blue),var(--indigo));border-radius:3px}
@@ -148,19 +149,19 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <!-- Stats -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
       <div class="stat-card glass rounded-2xl p-5 text-center">
-        <div class="font-display text-3xl font-bold gt mb-1" data-count="1000000" data-suffix="M+">1M+</div>
+        <div class="num text-3xl gt mb-1" data-count="1000000" data-suffix="M+">1M+</div>
         <div class="text-xs text-gray-400">Заказов выполнено</div>
       </div>
       <div class="stat-card glass rounded-2xl p-5 text-center">
-        <div class="font-display text-3xl font-bold gt mb-1">99%</div>
+        <div class="num text-3xl gt mb-1">99%</div>
         <div class="text-xs text-gray-400">Довольных клиентов</div>
       </div>
       <div class="stat-card glass rounded-2xl p-5 text-center">
-        <div class="font-display text-3xl font-bold gt mb-1">24/7</div>
+        <div class="num text-3xl gt mb-1">24/7</div>
         <div class="text-xs text-gray-400">Поддержка</div>
       </div>
       <div class="stat-card glass rounded-2xl p-5 text-center">
-        <div class="font-display text-3xl font-bold gt mb-1">5 мин</div>
+        <div class="num text-3xl gt mb-1">5 мин</div>
         <div class="text-xs text-gray-400">Средний старт</div>
       </div>
     </div>
@@ -397,23 +398,23 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
           <div class="glass rounded-2xl p-4 text-center border border-white/10 hover:border-white/20 transition-colors">
             <div class="text-xs text-gray-500 mb-1 uppercase tracking-wider">Старт</div>
-            <div class="font-display text-2xl font-bold text-white mb-1">3%</div>
+            <div class="num text-2xl text-white mb-1">3%</div>
             <div class="text-xs text-gray-400 leading-tight">от 1 000 ₽<br>на счёте</div>
           </div>
           <div class="glass rounded-2xl p-4 text-center border border-[#0AAFFF]/25 hover:border-[#0AAFFF]/50 transition-colors">
             <div class="text-xs text-[#0AAFFF] mb-1 uppercase tracking-wider">Базовый</div>
-            <div class="font-display text-2xl font-bold gt mb-1">5%</div>
+            <div class="num text-2xl gt mb-1">5%</div>
             <div class="text-xs text-gray-400 leading-tight">от 5 000 ₽<br>на счёте</div>
           </div>
           <div class="rounded-2xl p-4 text-center relative overflow-hidden border border-[#BF5AF2]/40" style="background:linear-gradient(135deg,rgba(191,90,242,.1),rgba(91,91,214,.1))">
             <div class="absolute top-2 right-2 text-xs bg-[#BF5AF2] text-white px-1.5 py-0.5 rounded-full font-bold" style="font-size:0.6rem">Популярный</div>
             <div class="text-xs text-[#BF5AF2] mb-1 uppercase tracking-wider">Продвинутый</div>
-            <div class="font-display text-2xl font-bold mb-1" style="background:linear-gradient(120deg,#BF5AF2,#5B5BD6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">8%</div>
+            <div class="num text-2xl mb-1" style="background:linear-gradient(120deg,#BF5AF2,#5B5BD6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">8%</div>
             <div class="text-xs text-gray-400 leading-tight">от 20 000 ₽<br>на счёте</div>
           </div>
           <div class="glass rounded-2xl p-4 text-center border border-[#30D158]/30 hover:border-[#30D158]/50 transition-colors">
             <div class="text-xs text-[#30D158] mb-1 uppercase tracking-wider">Премиум</div>
-            <div class="font-display text-2xl font-bold text-white mb-1">10%</div>
+            <div class="num text-2xl text-white mb-1">10%</div>
             <div class="text-xs text-gray-400 leading-tight">от 50 000 ₽<br>на счёте</div>
           </div>
         </div>
@@ -440,15 +441,15 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
             <p class="text-gray-400 text-sm leading-relaxed mb-4">Приглашайте друзей и партнёров — получайте <span class="text-[#30D158] font-semibold">10% от суммы каждого их заказа</span> на свой баланс. Без ограничений по сроку и количеству рефералов.</p>
             <div class="grid grid-cols-3 gap-3">
               <div class="glass rounded-xl p-3 text-center">
-                <div class="font-display text-lg font-bold text-[#30D158] mb-0.5">∞</div>
+                <div class="num text-lg text-[#30D158] mb-0.5">∞</div>
                 <div class="text-xs text-gray-500">Рефералов</div>
               </div>
               <div class="glass rounded-xl p-3 text-center">
-                <div class="font-display text-lg font-bold text-[#0AAFFF] mb-0.5">10%</div>
+                <div class="num text-lg text-[#0AAFFF] mb-0.5">10%</div>
                 <div class="text-xs text-gray-500">С каждого заказа</div>
               </div>
               <div class="glass rounded-xl p-3 text-center">
-                <div class="font-display text-lg font-bold text-[#FF9F0A] mb-0.5">Сразу</div>
+                <div class="num text-lg text-[#FF9F0A] mb-0.5">Сразу</div>
                 <div class="text-xs text-gray-500">Начисление</div>
               </div>
             </div>
@@ -495,24 +496,24 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
             <h3 class="font-display text-xl font-bold mb-1">Выбор услуги</h3>
             <p class="text-gray-400 text-sm">Выберите нужную услугу из каталога или свяжитесь для консультации</p>
           </div>
-          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#0AAFFF] to-[#5B5BD6] flex items-center justify-center font-display text-xl font-bold z-10 glow-blue flex-shrink-0">1</div>
+          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#0AAFFF] to-[#5B5BD6] flex items-center justify-center num text-xl z-10 glow-blue flex-shrink-0">1</div>
           <div class="flex-1 md:hidden text-center"><h3 class="font-display text-xl font-bold mb-1">Выбор услуги</h3><p class="text-gray-400 text-sm">Выберите нужную услугу из каталога</p></div>
           <div class="flex-1 hidden md:block"></div>
         </div>
         <div class="flex flex-col md:flex-row items-center gap-6">
           <div class="flex-1 hidden md:block"></div>
-          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#5B5BD6] to-[#BF5AF2] flex items-center justify-center font-display text-xl font-bold z-10 flex-shrink-0" style="box-shadow:0 0 24px rgba(91,91,214,.45)">2</div>
+          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#5B5BD6] to-[#BF5AF2] flex items-center justify-center num text-xl z-10 flex-shrink-0" style="box-shadow:0 0 24px rgba(91,91,214,.45)">2</div>
           <div class="flex-1 md:text-left text-center"><h3 class="font-display text-xl font-bold mb-1">Оплата</h3><p class="text-gray-400 text-sm">Криптовалюта, карты, электронные кошельки — всё удобно</p></div>
         </div>
         <div class="flex flex-col md:flex-row items-center gap-6">
           <div class="flex-1 md:text-right hidden md:block"><h3 class="font-display text-xl font-bold mb-1">Выполнение</h3><p class="text-gray-400 text-sm">Начинаем работу в течение 5–15 минут после оплаты</p></div>
-          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#BF5AF2] to-[#FF9F0A] flex items-center justify-center font-display text-xl font-bold z-10 flex-shrink-0" style="box-shadow:0 0 24px rgba(191,90,242,.4)">3</div>
+          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#BF5AF2] to-[#FF9F0A] flex items-center justify-center num text-xl z-10 flex-shrink-0" style="box-shadow:0 0 24px rgba(191,90,242,.4)">3</div>
           <div class="flex-1 md:hidden text-center"><h3 class="font-display text-xl font-bold mb-1">Выполнение</h3><p class="text-gray-400 text-sm">Начинаем работу в течение 5–15 минут</p></div>
           <div class="flex-1 hidden md:block"></div>
         </div>
         <div class="flex flex-col md:flex-row items-center gap-6">
           <div class="flex-1 hidden md:block"></div>
-          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#FF9F0A] to-[#30D158] flex items-center justify-center font-display text-xl font-bold z-10 flex-shrink-0" style="box-shadow:0 0 24px rgba(255,159,10,.4)">4</div>
+          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#FF9F0A] to-[#30D158] flex items-center justify-center num text-xl z-10 flex-shrink-0" style="box-shadow:0 0 24px rgba(255,159,10,.4)">4</div>
           <div class="flex-1 md:text-left text-center"><h3 class="font-display text-xl font-bold mb-1">Результат</h3><p class="text-gray-400 text-sm">Получаете отчёт и наблюдаете рост вашего проекта</p></div>
         </div>
       </div>
